@@ -1,6 +1,6 @@
 import math
-from .geometric_figure import GeometricFigure
-from .figure_color import FigureColor
+from lab_python_oop.geometric_figure import GeometricFigure
+from lab_python_oop.figure_color import FigureColor
 
 
 class Circle(GeometricFigure):

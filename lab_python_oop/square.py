@@ -1,4 +1,4 @@
-from .rectangle import Rectangle
+from lab_python_oop.rectangle import Rectangle
 
 
 class Square(Rectangle):

@@ -1,9 +1,10 @@
-import requests
-from lab_python_oop import Rectangle, Circle, Square
+from lab_python_oop.rectangle import Rectangle
+from lab_python_oop.circle import Circle
+from lab_python_oop.square import Square
 
 
 def main():
-    print("=== Тестирование классов геометрических фигур ===\n")
+    print("Тестирование классов геометрических фигур\n")
     
     rectangle = Rectangle(5, 5, "синий")
     circle = Circle(5, "зеленый")

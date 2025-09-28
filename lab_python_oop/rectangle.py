@@ -1,5 +1,5 @@
-from .geometric_figure import GeometricFigure
-from .figure_color import FigureColor
+from lab_python_oop.geometric_figure import GeometricFigure
+from lab_python_oop.figure_color import FigureColor
 
 class Rectangle(GeometricFigure):
     def __init__(self, width, height, color):
