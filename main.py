@@ -1,115 +1,89 @@
-import asyncio
-from aiogram import Bot, Dispatcher, F
-from aiogram.types import ReplyKeyboardMarkup, KeyboardButton, Message, InlineKeyboardMarkup, InlineKeyboardButton, CallbackQuery
-from aiogram.filters import CommandStart, Command
-from typing import Optional
+class Catalog:
+    def __init__(self, id_catalog, name):
+        self.id_catalog = id_catalog
+        self.name = name
 
-import requests
+class File:
+    def __init__(self, id_file, name, size, id_catalog):
+        self.id_file = id_file
+        self.name = name
+        self.size = size
+        self.id_catalog = id_catalog
 
-from dotenv import load_dotenv
-import os
+class CatalogFile:
+    def __init__(self, id_file, id_catalog):
+        self.id_file = id_file
+        self.id_catalog = id_catalog
 
-load_dotenv()
-TELEGRAM_TOKEN = os.getenv("TELEGRAM_TOKEN")
-GIPHY_KEY = os.getenv("GIPHY_KEY")
+catalogs = [
+    Catalog(1, "Документы"),
+    Catalog(2, "Изображения"),
+    Catalog(3, "Видео")
+]
 
-if not TELEGRAM_TOKEN:
-    raise RuntimeError("Не указан TELEGRAM_TOKEN")
-if not GIPHY_KEY:
-    raise RuntimeError("Не указан GIPHY_KEY")
+files = [
+    File(1, "Анализ.txt", 1250, 1),
+    File(2, "Архив.zip", 8500, 1),
+    File(3, "Фото.png", 3200, 2),
+    File(4, "Видео.mp4", 7000, 3),
+    File(5, "Приложение.apk", 900, 1)
+]
 
-bot = Bot(token=TELEGRAM_TOKEN)
-dp = Dispatcher()
+catalog_files = [
+    CatalogFile(1, 1),
+    CatalogFile(2, 1),
+    CatalogFile(3, 2),
+    CatalogFile(3, 1),
+    CatalogFile(4, 3),
+    CatalogFile(5, 1),
+]
 
+def Task_1():
+    result = []
+    for f in files:
+        if f.name.startswith("А"):
+            for c in catalogs:
+                if f.id_catalog == c.id_catalog:
+                    result.append((f.name, c.name))
+    return result
 
-def get_random_gif(tag: str, rating: str) -> Optional[str]:
-    url = "https://api.giphy.com/v1/gifs/random"
-    params = {
-        "api_key": GIPHY_KEY,
-        "tag": tag,
-        "rating": rating
-    }
-    try:
-        resp = requests.get(url, params=params, timeout=10)
-        resp.raise_for_status()
-        data = resp.json()
-        gif_data = data.get("data")
-        return gif_data["images"]["original"]["url"]
-    except (requests.RequestException, KeyError):
-        return None
+def Task_2():
+    result = []
+    for c in catalogs:
+        file_sizes = [f.size for f in files if f.id_catalog == c.id_catalog]
+        if file_sizes:
+            result.append((c.name, min(file_sizes)))
+    return sorted(result, key=lambda x: x[1])
+
+def Task_3():
+    result = []
+    for cf in catalog_files:
+        for f in files:
+            for c in catalogs:
+                if cf.id_file == f.id_file and cf.id_catalog == c.id_catalog:
+                    result.append((f.name, c.name))
+    return sorted(result, key=lambda x: x[0])
+
+def main():
+    print("Предметная область: Файл, Каталог файлов\n")
+
+    res1 = Task_1()
     
-def get_gif(title: str) -> Optional[str]:
-    url = "https://api.giphy.com/v1/gifs/search"
-    params = {
-        "api_key": GIPHY_KEY,
-        "q": title,
-    }
-    try:
-        resp = requests.get(url, params=params, timeout=10)
-        resp.raise_for_status()
-        data = resp.json()
-        gif_data = data.get("data")
-        if gif_data:
-            return gif_data[0]["images"]["original"]["url"]
-        return None
-    except (requests.RequestException, KeyError):
-        return None
-
-
-@dp.message(CommandStart())
-async def start_command(message: Message):
-    keyboard = ReplyKeyboardMarkup(
-        keyboard=[[KeyboardButton(text="Рандомная гифка"), KeyboardButton(text="Найти гифку")]],resize_keyboard=True)
-    await message.answer(
-        text="Привет! Я бот, который может присылать тебе гифки. \n" \
-        "Нажми кнопку ниже, чтобы получить гифку.",
-        reply_markup=keyboard
-    )
+    print("Задание В1. Файлы, начинающиеся с 'А':")
+    for name, cat in res1:
+        print(f"{name} — {cat}")
     
+    res2 = Task_2()
 
-@dp.message(F.text == "Рандомная гифка")
-async def send_gif(message: Message):
-    gif_url = get_random_gif(tag="funny", rating="pg-13")
-    kb = InlineKeyboardMarkup(inline_keyboard=[[InlineKeyboardButton(text="Еще гифку", callback_data="more_gif")]])
-    if gif_url:
-        await message.answer_animation(animation=gif_url, reply_markup=kb)
-    else:
-        await message.answer("Извини, не удалось получить гифку(")
+    print("\nЗадание В2. Каталоги с минимальным размером файла:")
+    for cat, size in res2:
+        print(f"{cat}: {size} КБ")
 
-@dp.callback_query(F.data == "more_gif")
-async def more_gif(callback: CallbackQuery):
-    gif_url = get_random_gif(tag="funny", rating="pg-13")
-    kb = InlineKeyboardMarkup(inline_keyboard=[[InlineKeyboardButton(text="Еще гифку", callback_data="more_gif")]])
-    if gif_url:
-        await callback.message.answer_animation(animation=gif_url, reply_markup=kb)
-    else:
-        await callback.message.answer("Извини, не удалось получить гифку(")
-    await callback.answer()
+    res3 = Task_3()
 
-
-@dp.message(Command("malkov"))
-async def pashalka(message:Message):
-    kb = ReplyKeyboardMarkup(keyboard=[[KeyboardButton(text="Рандомная гифка"), KeyboardButton(text="Найти гифку")]],resize_keyboard=True)
-    await message.answer_animation(animation="https://media1.tenor.com/m/spgJsx_4cdoAAAAC/me-atrapaste-es-cine.gif", reply_markup=kb)
-
-
-@dp.message(F.text == "Найти гифку")
-async def find_gif(message: Message):
-    await message.answer("Напиши название гифки, которую хочешь найти.")
-
-@dp.message()
-async def search_gif(message: Message):
-    title = message.text
-    gif_url = get_gif(title=title)
-    kb = ReplyKeyboardMarkup(keyboard=[[KeyboardButton(text="Рандомная гифка"), KeyboardButton(text="Найти гифку")]],resize_keyboard=True)
-    if gif_url:
-        await message.answer_animation(animation=gif_url, reply_markup=kb)
-    else:
-        await message.answer("Извини, не удалось найти гифку по твоему запросу(", reply_markup=kb)
-
-
-async def main():
-    await dp.start_polling(bot)
+    print("\nЗадание В3. Файлы и каталоги (многие-ко-многим):")
+    for file_name, cat_name in res3:
+        print(f"{file_name} — {cat_name}")
 
 if __name__ == "__main__":
-    asyncio.run(main())
+    main()
