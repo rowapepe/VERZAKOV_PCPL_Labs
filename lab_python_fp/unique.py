@@ -1,16 +1,58 @@
-class Unique(object):
-    def __init__(self, items, **kwargs):
-        # Нужно реализовать конструктор
-        # В качестве ключевого аргумента, конструктор должен принимать bool-параметр ignore_case,
-        # в зависимости от значения которого будут считаться одинаковыми строки в разном регистре
-        # Например: ignore_case = True, Aбв и АБВ - разные строки
-        #           ignore_case = False, Aбв и АБВ - одинаковые строки, одна из которых удалится
-        # По-умолчанию ignore_case = False
-        pass
+from typing import Iterable, Any
+from gen_random import gen_random
 
-    def __next__(self):
-        # Нужно реализовать __next__    
-        pass
+class Unique(object):
+    def __init__(self, data: Iterable[Any], case_sensitive: bool=True):
+        self.sequence = iter(data)
+        self.used_elements = set()
+        self.case_sensitive = case_sensitive
+
+    def __next__(self) -> Any:
+        while True:
+            element = next(self.sequence)
+
+            if isinstance(element, str) and not self.case_sensitive:
+                key = element.lower()
+            else:
+                key = element
+
+            try:
+                if key not in self.used_elements:
+                    self.used_elements.add(key)
+                    return element
+            except TypeError:
+                repr_key = ("__repr__:" + repr(key))
+                if repr_key not in self.used_elements:
+                    self.used_elements.add(repr_key)
+                    return element
 
     def __iter__(self):
         return self
+    
+def main():
+    print('---')
+
+    for item in Unique([1, 1, 1, 1, 1, 2, 2, 2, 2, 2]):
+        print(item)
+
+    print('---')
+
+    for item in Unique(gen_random(10, 1, 3)):
+        print(item)
+
+    data = ['Apple', 'Banana', 'apple', 'Orange', 'banana', 'Grape']
+
+    print('---')
+
+    for item in Unique(data, case_sensitive=False):
+        print(item)
+
+    print('---')
+
+    for item in Unique(data, case_sensitive=True):
+        print(item)
+    
+    return 0
+
+if __name__ == "__main__":
+    main()
