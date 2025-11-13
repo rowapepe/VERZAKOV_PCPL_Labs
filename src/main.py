@@ -16,7 +16,7 @@ class HomeworkStates(StatesGroup):
     editing_homework = State()
 
 load_dotenv()
-TELEGRAM_TOKEN = os.getenv("TELEGRAM_TOKEN")
+TELEGRAM_TOKEN = os.getenv("TELEGRAM_TOKEN_BOT1")
 
 if not TELEGRAM_TOKEN:
     raise RuntimeError("Не указан TELEGRAM_TOKEN")
