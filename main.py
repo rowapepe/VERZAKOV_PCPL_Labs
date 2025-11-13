@@ -10,7 +10,7 @@ from dotenv import load_dotenv
 import os
 
 load_dotenv()
-TELEGRAM_TOKEN = os.getenv("TELEGRAM_TOKEN")
+TELEGRAM_TOKEN = os.getenv("TELEGRAM_TOKEN_BOT2")
 GIPHY_KEY = os.getenv("GIPHY_KEY")
 
 if not TELEGRAM_TOKEN:
