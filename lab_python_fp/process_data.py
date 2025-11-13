@@ -17,7 +17,7 @@ def f1(vacancies):
 
 @print_result
 def f2(jobs):
-    return list(filter(lambda job: job.startswith("программист"), jobs))
+    return list(filter(lambda job: isinstance(job, str) and job.lower().startswith("программист"), jobs))
 
 @print_result
 def f3(jobs):

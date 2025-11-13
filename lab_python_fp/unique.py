@@ -4,7 +4,7 @@ from gen_random import gen_random
 class Unique(object):
     def __init__(self, data: Iterable[Any], case_sensitive: bool=True):
         self.sequence = iter(data)
-        self.used_elements = set()
+        self.used_elements = dict()
         self.case_sensitive = case_sensitive
 
     def __next__(self) -> Any:
@@ -16,15 +16,9 @@ class Unique(object):
             else:
                 key = element
 
-            try:
-                if key not in self.used_elements:
-                    self.used_elements.add(key)
-                    return element
-            except TypeError:
-                repr_key = ("__repr__:" + repr(key))
-                if repr_key not in self.used_elements:
-                    self.used_elements.add(repr_key)
-                    return element
+            if key not in self.used_elements:
+                self.used_elements[key] = True
+                return element
 
     def __iter__(self):
         return self

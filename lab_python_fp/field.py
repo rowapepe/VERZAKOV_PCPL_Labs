@@ -1,6 +1,6 @@
 goods = [
-{'title': 'Ковер', 'price': 2000, 'color': 'green'},
-{'title': 'Диван для отдыха', 'price': 5300, 'color': 'black'}
+    {'title': 'Ковер', 'price': 2000, 'color': 'green'},
+    {'title': 'Диван для отдыха', 'price': 5300, 'color': 'black'}
 ]
 
 def field(items, *args):
