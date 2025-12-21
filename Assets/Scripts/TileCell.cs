@@ -1,5 +1,6 @@
 using UnityEngine;
 
+// Представляет одну ячейку на игровой доске
 public class TileCell : MonoBehaviour
 {
     public Vector2Int Coordinates { get; set; }

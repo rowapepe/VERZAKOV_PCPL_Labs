@@ -2,6 +2,7 @@ using System.Collections;
 using UnityEngine;
 using TMPro;
 
+// Главный менеджер игры, управляющий состоянием игры, счетом и UI
 public class GameManager : MonoBehaviour
 {
     public TileBoard board;
@@ -9,10 +10,14 @@ public class GameManager : MonoBehaviour
     public TextMeshProUGUI scoreText;
     public TextMeshProUGUI bestScore;
     private int score;
+    
+    // Инициализация новой игры при старте
     private void Start()
     {
         NewGame();
     }
+    
+    // Начинает новую игру: сбрасывает счет, очищает доску и создает начальные плитки
     public void NewGame()
     {
         SetScore(0);
@@ -27,6 +32,7 @@ public class GameManager : MonoBehaviour
         board.enabled = true;
     }
 
+    // Обрабатывает окончание игры: отключает доску и показывает экран окончания
     public void GameOver()
     {
         board.enabled = false;
@@ -34,7 +40,7 @@ public class GameManager : MonoBehaviour
 
         StartCoroutine(Fade(gameOver, 1f, 1f));
     }
-
+    // Плавное изменение прозрачности с задержкой
     private IEnumerator Fade(CanvasGroup canvasGroup, float to, float delay)
     {
         yield return new WaitForSeconds(delay);
@@ -43,6 +49,7 @@ public class GameManager : MonoBehaviour
         float duration = 0.5f;
         float from = canvasGroup.alpha;
 
+        // Плавная интерполяция прозрачности
         while (elapsed < duration)
         {
             canvasGroup.alpha = Mathf.Lerp(from, to, elapsed / duration);
